@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG Knowledge Base Chatbot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+
+<header>
+  <div class="hdr-inner">
+    <div class="logo">
+      <div class="logo-cube">
+        <span>R</span><span>A</span><span>G</span>
+      </div>
+      <div class="logo-text">
+        <div class="logo-name">Knowledge Base Chatbot</div>
+        <div class="logo-sub">multi-document · TF-IDF retrieval · Claude AI</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="kb-status" id="kbStatus">
+        <span class="status-dot"></span>
+        <span id="kbStatusText">Initialising…</span>
+      </div>
+      <a href="https://github.com/szmsk/rag-chatbot" target="_blank" class="gh-link">github ↗</a>
+    </div>
+  </div>
+</header>
+
+<div class="app-grid">
+
+  <!-- ── LEFT PANEL ── -->
+  <aside class="left-panel">
+
+    <!-- API Key -->
+    <div class="card">
+      <div class="card-label">API KEY</div>
+      <div class="key-row">
+        <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+        <button class="eye-btn" onclick="toggleKey()">👁</button>
+      </div>
+      <div class="key-hint"><a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · first $5 free</div>
+    </div>
+
+    <!-- Documents -->
+    <div class="card">
+      <div class="card-label">KNOWLEDGE BASE <span id="docCount" class="count-badge">0 docs</span></div>
+
+      <div class="drop-zone" id="dropZone"
+        ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)"
+        onclick="document.getElementById('pdfInput').click()">
+        <div class="dz-icon">＋</div>
+        <div class="dz-main">Add PDF document</div>
+        <div class="dz-sub">drag & drop or click · multiple files supported</div>
+        <input type="file" id="pdfInput" accept=".pdf" multiple style="display:none" onchange="handleFiles(event)">
+      </div>
+
+      <div id="docList" class="doc-list"></div>
+
+      <div id="uploadProgress" class="upload-progress" style="display:none">
+        <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+        <div class="prog-label" id="progLabel">Processing…</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="card" id="statsCard" style="display:none">
+      <div class="card-label">INDEX STATS</div>
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="card">
+      <div class="card-label">CONTROLS</div>
+      <button class="ctrl-btn" onclick="clearHistory()">🗑 Clear conversation history</button>
+      <button class="ctrl-btn danger" onclick="clearAll()">✕ Clear all documents</button>
+    </div>
+
+    <!-- How it works -->
+    <div class="card">
+      <div class="card-label">HOW IT WORKS</div>
+      <ol class="how-ol">
+        <li>Upload one or more PDF files</li>
+        <li>Text is extracted and split into chunks</li>
+        <li>TF-IDF index built for semantic search</li>
+        <li>Your question retrieves the top 5 relevant chunks</li>
+        <li>Claude answers with citations + remembers context</li>
+      </ol>
+    </div>
+
+  </aside>
+
+  <!-- ── CHAT PANEL ── -->
+  <section class="chat-panel">
+
+    <div class="messages" id="messages">
+      <div class="welcome" id="welcomeMsg">
+        <div class="wlc-icon">🧠</div>
+        <h1>Multi-Document RAG Chatbot</h1>
+        <p>Upload PDFs to build your knowledge base, then ask questions across all documents at once. The chatbot cites exact sources and remembers conversation context.</p>
+        <div class="wlc-features">
+          <div class="wlc-feat"><span class="feat-icon">📚</span>Multiple PDFs simultaneously</div>
+          <div class="wlc-feat"><span class="feat-icon">🔍</span>TF-IDF semantic retrieval</div>
+          <div class="wlc-feat"><span class="feat-icon">📎</span>Cited answers with page references</div>
+          <div class="wlc-feat"><span class="feat-icon">💬</span>Conversation memory across turns</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-zone">
+      <div class="input-bar">
+        <textarea
+          id="qInput"
+          placeholder="Ask a question across all documents…"
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+          disabled></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendQuestion()" disabled>↑</button>
+      </div>
+      <div class="input-meta" id="inputMeta">Upload PDFs to start asking questions</div>
+    </div>
+
+  </section>
+
+</div>
+
+<footer>
+  Built by <strong>Szymon Kloskowski</strong> ·
+  <a href="https://github.com/szmsk" target="_blank">github.com/szmsk</a> ·
+  RAG · TF-IDF · ChromaDB-compatible · LLM API
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
